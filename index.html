@@ -28,23 +28,43 @@
         .aviso-azul { background-color: var(--azul-claro); color: var(--azul-essencial); padding: 10px 15px; border-radius: 10px; margin-bottom: 15px; font-size: 0.8rem; line-height: 1.4; border: 1px solid var(--azul-borda); text-align: center; font-weight: 600; }
 
         .label-cliente { display: block; font-weight: 700; font-size: 0.85rem; color: var(--texto-suave); margin-bottom: 5px; }
-        input[type="text"], input[type="number"], select { width: 100%; border: 2px solid #e1e8ef; border-radius: 10px; padding: 10px; box-sizing: border-box; font-size: 14px; outline: none; margin-top: 5px; }
-
-        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        input[type=number] { -moz-appearance: textfield; }
+        
+        /* Ajuste de inputs e selects para ficarem mais próximos dos rótulos */
+        input[type="text"], input[type="number"], select { 
+            width: 100%; 
+            border: 2px solid #e1e8ef; 
+            border-radius: 10px; 
+            padding: 10px; 
+            box-sizing: border-box; 
+            font-size: 14px; 
+            outline: none; 
+            margin-top: 2px; /* Reduzido de 5px para 2px */
+        }
 
         .secao-container { margin-top: 20px; border: 1px solid #eee; padding: 12px; border-radius: 12px; background: #fff; }
-        .titulo-secao { font-weight: bold; color: var(--azul-essencial); margin-bottom: 12px; border-bottom: 2px solid var(--azul-claro); font-size: 0.85rem; padding-bottom: 5px; }
+        .titulo-secao { font-weight: bold; color: var(--azul-essencial); margin-bottom: 8px; border-bottom: 2px solid var(--azul-claro); font-size: 0.85rem; padding-bottom: 5px; }
         
-        .linha { display: grid; gap: 8px; align-items: center; margin-bottom: 8px; grid-template-columns: 4fr 2.5fr 1.8fr 35px; }
+        /* Cabeçalho colado nos balões */
+        .header-colunas { display: none; gap: 8px; grid-template-columns: 4fr 2.5fr 1.8fr 35px; margin-bottom: 0px; }
+        .header-colunas span { font-size: 0.6rem; font-weight: 800; color: #adb5bd; text-align: center; margin-bottom: 0; }
+
+        .linha { display: grid; gap: 8px; align-items: center; margin-bottom: 8px; grid-template-columns: 4fr 2.5fr 1.8fr 35px; transition: all 0.3s ease; }
         
-        .btn-add { width: 100%; padding: 10px; background: var(--azul-claro); color: var(--azul-essencial); border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 5px; font-size: 0.85rem; }
-        .btn-del { background: #ffe5e5; color: #ff4d4d; border: none; height: 35px; width: 35px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-add { width: 100%; padding: 10px; background: var(--azul-claro); color: var(--azul-essencial); border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 0.85rem; }
+        .btn-del { background: #ffe5e5; color: #ff4d4d; border: none; height: 35px; width: 35px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 2px; }
 
         .check-container { background-color: #fff9db; padding: 12px; border-radius: 8px; margin-top: 20px; display: flex; align-items: flex-start; gap: 10px; font-size: 0.8rem; border: 1px solid #ffe066; }
         .check-container input { width: 16px; height: 16px; margin-top: 2px; }
 
         .btn-whatsapp { width: 100%; padding: 16px; background: var(--verde-zap); color: white; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; margin-top: 20px; font-size: 16px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.2); }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 10000; padding: 20px; }
+        .modal-content { background: white; padding: 25px; border-radius: 20px; max-width: 450px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: left; }
+        #resumo-final-texto { white-space: pre-wrap; font-size: 0.85rem; color: #444; max-height: 300px; overflow-y: auto; background: #f9f9f9; padding: 15px; border-radius: 10px; margin: 15px 0; border: 1px solid #eee; font-family: monospace; }
+        .modal-buttons { display: flex; gap: 10px; }
+        .modal-buttons button { flex: 1; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+        .btn-voltar { background: #e9ecef; color: #495057; }
+        .btn-confirmar { background: var(--verde-zap); color: white; }
 
         footer { text-align: center; margin-top: 20px; font-size: 0.7rem; color: #adb5bd; }
     </style>
@@ -73,16 +93,19 @@
     <div id="fluxoNNT">
         <div class="secao-container">
             <div class="titulo-secao">TAMANHOS NORMAIS</div>
+            <div class="header-colunas"><span>NOME</span><span>TAMANHO</span><span>NÚMERO</span><span></span></div>
             <div id="lista-normais"></div>
             <button class="btn-add" onclick="addLinha('normais')">+ Adicionar Normal</button>
         </div>
         <div class="secao-container">
             <div class="titulo-secao">TAMANHOS BABY LOOK</div>
+            <div class="header-colunas"><span>NOME</span><span>TAMANHO</span><span>NÚMERO</span><span></span></div>
             <div id="lista-baby"></div>
             <button class="btn-add" onclick="addLinha('baby')">+ Adicionar Baby Look</button>
         </div>
         <div class="secao-container">
             <div class="titulo-secao">TAMANHOS INFANTIS</div>
+            <div class="header-colunas"><span>NOME</span><span>TAMANHO</span><span>NÚMERO</span><span></span></div>
             <div id="lista-infantis"></div>
             <button class="btn-add" onclick="addLinha('infantis')">+ Adicionar Infantil</button>
         </div>
@@ -93,31 +116,62 @@
         <span>Estou ciente que a Essencial Print produz o mínimo de 10 unidades. Após informar os tamanhos não farei nenhuma alteração, pois entendo que isso pode atrasar a produção. *</span>
     </div>
 
-    <button class="btn-whatsapp" onclick="enviarWhatsApp()">Enviar informações para o WhatsApp</button>
+    <button class="btn-whatsapp" onclick="prepararEnvio()">Enviar informações para o WhatsApp</button>
 
     <footer>Esse formulário é criação exclusiva da <strong>Essencial Print</strong>.</footer>
 </div>
 
+<div id="modalConfirmacao" class="modal-overlay">
+    <div class="modal-content">
+        <h3>Confirmar Lista</h3>
+        <div id="resumo-final-texto"></div>
+        <div class="modal-buttons">
+            <button type="button" class="btn-voltar" onclick="fecharModal()">Corrigir</button>
+            <button type="button" class="btn-confirmar" onclick="confirmarEEnviar()">Confirmar e Enviar</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const seuNumero = "5577999977481";
+    const ordemTamanhos = ["PP","P","M","G","GG","XG","XXG","BL PP","BL P","BL M","BL G","BL GG","BL XG","BL XXG","2 anos","4 anos","6 anos","8 anos","10 anos","12 anos"];
+    
     const tNormais = ["PP","P","M","G","GG","XG","XXG"];
     const tBaby = ["BL PP","BL P","BL M","BL G","BL GG","BL XG","BL XXG"];
     const tInfantil = ["2 anos","4 anos","6 anos","8 anos","10 anos","12 anos"];
+    let mensagemPronta = "";
 
-    function apenasNumeros(e) {
-        e.target.value = e.target.value.replace(/[^0-9]/g, '');
+    function apenasNumeros(e) { e.target.value = e.target.value.replace(/[^0-9]/g, ''); }
+    function formatarNumero(n) { return n < 10 ? '0' + n : n; }
+    function plural(n) { return n === 1 ? 'unidade' : 'unidades'; }
+
+    function atualizarVisibilidadeHeaders(cat) {
+        const container = document.getElementById('lista-' + cat);
+        const header = container.previousElementSibling;
+        header.style.display = container.children.length > 0 ? 'grid' : 'none';
     }
 
-    function formatarNumero(n) {
-        return n < 10 ? '0' + n : n;
+    function organizarLinhasNoSite(cat) {
+        const idContainer = 'lista-' + cat;
+        const container = document.getElementById(idContainer);
+        const linhas = Array.from(container.querySelectorAll('.linha'));
+        
+        linhas.sort((a, b) => {
+            const tamA = a.querySelector('.p-tam').value;
+            const tamB = b.querySelector('.p-tam').value;
+            return ordemTamanhos.indexOf(tamA) - ordemTamanhos.indexOf(tamB);
+        });
+        linhas.forEach(linha => container.appendChild(linha));
     }
 
-    function plural(n) {
-        return n === 1 ? 'unidade' : 'unidades';
+    function removerLinha(btn, cat) {
+        btn.parentElement.remove();
+        atualizarVisibilidadeHeaders(cat);
     }
 
     function addLinha(cat) {
-        let container = document.getElementById('lista-' + cat);
+        const idContainer = 'lista-' + cat;
+        let container = document.getElementById(idContainer);
         let opts = "";
         if(cat==='normais') tNormais.forEach(t => opts += `<option ${t==='M'?'selected':''}>${t}</option>`);
         if(cat==='baby') tBaby.forEach(t => opts += `<option ${t==='BL M'?'selected':''}>${t}</option>`);
@@ -126,17 +180,24 @@
         const div = document.createElement('div');
         div.className = 'linha';
         div.innerHTML = `
-            <input type="text" class="p-nome" placeholder="Nome">
-            <select class="p-tam">${opts}</select>
+            <input type="text" class="p-nome" placeholder="Nome" onblur="organizarLinhasNoSite('${cat}')">
+            <select class="p-tam" onchange="organizarLinhasNoSite('${cat}')">${opts}</select>
             <input type="number" class="p-num" oninput="apenasNumeros(event)" placeholder="00">
-            <button class="btn-del" onclick="this.parentElement.remove()">X</button>`;
+            <button class="btn-del" onclick="removerLinha(this, '${cat}')">X</button>`;
         container.appendChild(div);
+        
+        atualizarVisibilidadeHeaders(cat);
+        organizarLinhasNoSite(cat);
     }
 
-    // Inicializa com uma linha
-    addLinha('normais');
+    function fecharModal() { document.getElementById('modalConfirmacao').style.display = 'none'; }
 
-    function enviarWhatsApp() {
+    function confirmarEEnviar() {
+        window.open(`https://wa.me/${seuNumero}?text=${encodeURIComponent(mensagemPronta)}`);
+        fecharModal();
+    }
+
+    function prepararEnvio() {
         const cliente = document.getElementById('nomeCliente').value.trim();
         const checkMinimo = document.getElementById('minimoCheck').checked;
 
@@ -147,38 +208,40 @@
         let msgCorpo = "";
 
         const cats = [
-            { id: 'lista-normais', label: 'NORMAIS' },
-            { id: 'lista-baby', label: 'BABY LOOK' },
-            { id: 'lista-infantis', label: 'INFANTIS' }
+            { id: 'lista-normais', label: 'NORMAIS', slug: 'normais' },
+            { id: 'lista-baby', label: 'BABY LOOK', slug: 'baby' },
+            { id: 'lista-infantis', label: 'INFANTIS', slug: 'infantis' }
         ];
 
         cats.forEach(cat => {
+            organizarLinhasNoSite(cat.slug);
             const linhas = document.getElementById(cat.id).querySelectorAll('.linha');
             let secaoTxt = "";
             let subtotal = 0;
+
             linhas.forEach(l => {
                 let n = l.querySelector('.p-nome').value.trim();
                 let tam = l.querySelector('.p-tam').value;
                 let numRaw = l.querySelector('.p-num').value.trim();
                 let num = numRaw !== "" ? formatarNumero(parseInt(numRaw)) : "";
-                
-                secaoTxt += `${n.toUpperCase()} | ${tam}${num ? ' | ' + num : ''}\n`;
+                let parteNome = n ? `${n.toUpperCase()} | ` : "| ";
+                secaoTxt += `${parteNome}${tam}${num ? ' | ' + num : ''}\n`;
                 subtotal++;
                 totalGeral++;
             });
+
             if(secaoTxt) msgCorpo += `*>> ${cat.label} - ${formatarNumero(subtotal)} ${plural(subtotal)}*\n${secaoTxt}\n`;
         });
 
-        if(totalGeral < 10) {
-            alert("Você deve encaminhar, no mínimo, 10 unidades para prosseguir.");
-            return;
-        }
+        if(totalGeral < 10) { alert("Você deve encaminhar, no mínimo, 10 unidades para prosseguir."); return; }
 
         let msgFinal = `*LISTA DE CONFIRMAÇÃO*\n👤 *Cliente:* ${cliente.toUpperCase()}\n\n`;
         msgFinal += msgCorpo;
         msgFinal += `\n*TOTAL: ${formatarNumero(totalGeral)} ${plural(totalGeral)}*\n\n✅ _Ciente de que os dados seguem direto para a produção, não farei alterações para evitar erros ou atrasos na entrega._`;
         
-        window.open(`https://wa.me/${seuNumero}?text=${encodeURIComponent(msgFinal)}`);
+        mensagemPronta = msgFinal;
+        document.getElementById('resumo-final-texto').innerText = msgFinal;
+        document.getElementById('modalConfirmacao').style.display = 'flex';
     }
 </script>
 </body>
